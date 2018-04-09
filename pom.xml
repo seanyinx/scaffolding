@@ -28,6 +28,7 @@
 
   <modules>
     <module>docker-build-spring-boot</module>
+    <module>docker-build-war</module>
   </modules>
 
   <properties>

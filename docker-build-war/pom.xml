@@ -16,17 +16,17 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>com.github.seanyinx</groupId>
     <artifactId>scaffolding</artifactId>
+    <groupId>com.github.seanyinx</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>docker-build-spring-boot</artifactId>
-
+  <artifactId>docker-build-war</artifactId>
   <packaging>pom</packaging>
 
   <build>
@@ -41,7 +41,7 @@
                 <name>${project.artifactId}:${project.version}</name>
                 <alias>${project.artifactId}</alias>
                 <build>
-                  <from>openjdk:8-jre-alpine</from>
+                  <from>tomcat:8.5-jre8</from>
                   <ports>
                     <port>8080</port>
                   </ports>
@@ -54,17 +54,19 @@
                       </formats>
                       <fileSets>
                         <fileSet>
-                          <directory>${project.build.directory}/scaffolding</directory>
-                          <outputDirectory>scaffolding</outputDirectory>
-                          <fileMode>0644</fileMode>
-                          <directoryMode>0644</directoryMode>
+                          <directory>${project.basedir}/target/</directory>
+                          <outputDirectory>/usr/local/tomcat/webapps</outputDirectory>
+                          <fileMode>0770</fileMode>
+                          <directoryMode>0770</directoryMode>
+                          <includes>
+                            <include>*.war</include>
+                          </includes>
                         </fileSet>
                       </fileSets>
                     </inline>
                   </assembly>
                   <entryPoint>
-                    <shell>java $JAVA_OPTS -jar /maven/scaffolding/${project.artifactId}-${project.version}-exec.jar
-                    </shell>
+                    <shell>catalina.sh run</shell>
                   </entryPoint>
                 </build>
               </image>
@@ -77,21 +79,6 @@
               <goals>
                 <goal>build</goal>
               </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <goals>
-                <goal>repackage</goal>
-              </goals>
-              <configuration>
-                <outputDirectory>${project.build.directory}/scaffolding</outputDirectory>
-                <classifier>exec</classifier>
-              </configuration>
             </execution>
           </executions>
         </plugin>
