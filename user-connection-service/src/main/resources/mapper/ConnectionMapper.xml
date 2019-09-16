@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.seanyinx.scaffolding.greeting.infrastructure.domain.ConnectionMapper">
+  <resultMap id="BaseResultMap" type="com.github.seanyinx.scaffolding.greeting.domain.Connection">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="relationship" jdbcType="VARCHAR" property="relationship"/>
+    <association property="originator" javaType="com.github.seanyinx.scaffolding.greeting.domain.User">
+      <result property="id" column="originator_id"/>
+    </association>
+    <association property="recipient" javaType="com.github.seanyinx.scaffolding.greeting.domain.User">
+      <result property="id" column="recipient_id"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, originator_id, recipient_id, relationship
+  </sql>
+  <!--新增并返回主键-->
+  <insert id="insertAndReturnId" parameterType="com.github.seanyinx.scaffolding.greeting.domain.Connection" useGeneratedKeys="true" keyProperty="id">
+    insert into connection (originator_id, recipient_id,
+    relationship)
+    values (#{originator.id,jdbcType=BIGINT}, #{recipient.id,jdbcType=BIGINT},
+    #{relationship,jdbcType=VARCHAR})
+  </insert>
+  <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from connection
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="findConnections" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from connection
+  </select>
+</mapper>
